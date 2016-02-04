@@ -122,12 +122,119 @@
       // "press" reload button on orientation change?
       var TOKEN_RELOAD_ONORIENTATIONCHANGE = true;
     </script>
+
+
+
     <script type="demo">
-      // THIS IS WHERE YOUR DEMO GOES
-      document.write('see console');
-      console.log('demo here', window.a, b, window.c, window.g, window.d);
-      // END
+      //initialize variables
+    x =       //player start x pos
+    vx =      //player start x vel
+    vy =      //player start y vel
+    s =       //start score
+    l = 0;    //starting level
+    dv = 5;   //default velocity
+    eh =      //enemy height
+    ew = 10;  //enemy width
+    y =       //player start y pos
+    h =       //player height
+    w = 30;   //player width
+    e = [];   //array for enemeies, each enemy array is formatted {x:, y:}
+
+    //listen for keydown event and give player a velocity based on input
+    b.addEventListener("keydown", function(e) { 
+      k = e.keyCode;
+
+      if(k == 40)
+        vy = dv;
+      if(k == 38)
+        vy = -dv;
+      if(k == 39)
+        vx = dv;
+      if(k == 37)
+        vx = -dv;
+    });
+
+    //listen for keyup event and give player a velocity based on input
+    b.addEventListener("keyup", function(e) { 
+      k = e.keyCode;
+      if(k == 40 || k == 38)
+        vy = 0;
+      if(k == 39 || k == 37)
+        vx = 0;
+    });
+
+    //reusable function to draw a rectangle
+    function r(x,y,h,w) {
+      c.beginPath();
+      c.rect(x, y, h, w);
+      c.fill();
+      c.closePath();
+    }
+    
+    //random number
+    function rn(n) {
+      return Math.floor(Math.random()*n);
+    }
+
+    //draw score
+    function ds() {
+      c.font = "16px Arial";
+      c.fillStyle = "#000";
+      c.fillText("Score: " + s + " Level: " + l, 8, 20);
+    }
+
+    //make enemies
+    function me(n) {
+      for(i=0;i<=n;i++) {
+        e.push({x:rn(a.width-ew),y:rn(a.height-h-eh)+h});
+      }
+    }
+
+    //draw enemy
+    function de(enem) {
+      c.fillStyle = "#ff0";
+      r(enem.x,enem.y,10,10);
+    }
+
+    //collision detection
+    function col() {
+      for(i=0;i<e.length;i++) {
+        if(x>=e[i].x-w && x<e[i].x+ew && y>e[i].y-h && y<e[i].y+eh) {
+          e.splice(i,1);
+          s++;
+        }
+      }
+    }
+
+    
+
+    //draw routine
+    function d() {
+      c.clearRect(0, 0, a.width, a.height);
+      c.fillStyle = "#becde3";
+      r(0, 0, a.width, a.height);
+      c.fillStyle = "#000";
+      r(x, y, h, w);
+      if(e.length==0){
+        l++;
+        me(rn(2*l));
+      }
+      e.map(de);
+      col();
+      ds();
+      if(a.height-h < y + vy || y + vy < h)
+        vy = 0;
+      if(a.width-w < x + vx || x + vx < 0)
+        vx = 0;
+      x += vx;
+      y += vy;
+      requestAnimationFrame(d);
+    }
+    d();
     </script>
+
+
+
     <script>
       (function(){var doc=document;var header=doc.getElementsByTagName("header")[0];var firstChild=header.firstChild;var p=doc.getElementsByClassName("p")[0];
       var n=doc.getElementsByClassName("n")[0];header.insertBefore(p,firstChild);header.insertBefore(n,firstChild);header.appendChild(doc.getElementsByTagName
