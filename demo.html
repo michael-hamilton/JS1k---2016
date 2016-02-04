@@ -131,6 +131,7 @@
     vx =      //player start x vel
     vy =      //player start y vel
     s =       //start score
+    t =       //set time
     l = 0;    //starting level
     dv = 5;   //default velocity
     eh =      //enemy height
@@ -180,7 +181,7 @@
     function ds() {
       c.font = "16px Arial";
       c.fillStyle = "#000";
-      c.fillText("Score: " + s + " Level: " + l, 8, 20);
+      c.fillText("Score: " + s + " Level: " + l + " Time: " + t, 8, 20);
     }
 
     //make enemies
@@ -201,6 +202,7 @@
       for(i=0;i<e.length;i++) {
         if(x>=e[i].x-w && x<e[i].x+ew && y>e[i].y-h && y<e[i].y+eh) {
           e.splice(i,1);
+          t+=1/e.length*50;
           s++;
         }
       }
@@ -213,22 +215,29 @@
       c.clearRect(0, 0, a.width, a.height);
       c.fillStyle = "#becde3";
       r(0, 0, a.width, a.height);
-      c.fillStyle = "#000";
-      r(x, y, h, w);
-      if(e.length==0){
-        l++;
-        me(rn(2*l));
-      }
-      e.map(de);
-      col();
       ds();
-      if(a.height-h < y + vy || y + vy < h)
-        vy = 0;
-      if(a.width-w < x + vx || x + vx < 0)
-        vx = 0;
-      x += vx;
-      y += vy;
-      requestAnimationFrame(d);
+      if(t>=0){
+        c.fillStyle = "#000";
+        r(x, y, h, w);
+        t--;
+        if(e.length==0){
+          l++;
+          me(rn(2*l));
+          t= ~~(e.length*350*.5);
+        }
+        e.map(de);
+        col();
+        if(a.height-h < y + vy || y + vy < h)
+          vy = 0;
+        if(a.width-w < x + vx || x + vx < 0)
+          vx = 0;
+        x += vx;
+        y += vy;
+        requestAnimationFrame(d);
+      }
+      else{
+        alert("Lost! Score: "+s);
+      }
     }
     d();
     </script>
